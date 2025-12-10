@@ -1,5 +1,5 @@
 import json
-from ord_combining.common import Analysis, OutputSet
+from combineord.common import Analysis, OutputSet
 
 
 def load_analysis_and_outputsets(ord_output_dirs):

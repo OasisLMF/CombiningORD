@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ord_combining.ordhandling import merge_melt, merge_qelt, merge_selt, read_melt, read_qelt, read_selt
+from combineord.ordhandling import merge_melt, merge_qelt, merge_selt, read_melt, read_qelt, read_selt
 
 rng = np.random.default_rng(12345)
 
@@ -330,7 +330,7 @@ def sample_loss_sampling(gpqt, selt, number_of_samples=10):
 
     curr_gpqt = gpqt[merged]
     sample_loss_frags = []
-    for summary_id in tqdm(summary_ids, desc="sample ls"):
+    for summary_id in summary_ids:
         selt_summary_id = selt.query(f"SummaryId == {summary_id}").reset_index(drop=True)
         curr_loss_frag = sample_loss_sampling__summary_id(curr_gpqt, selt_summary_id, number_of_samples)
         curr_loss_frag["SummaryId"] = summary_id

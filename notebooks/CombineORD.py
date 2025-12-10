@@ -14,8 +14,8 @@
 # ---
 
 # %%
-%load_ext autoreload
-%autoreload 2
+# %load_ext autoreload
+# %autoreload 2
 
 # %% [markdown]
 # # Combining Results in ORD
@@ -51,16 +51,16 @@ if module_path not in sys.path:
 # The input files are multiple runs of PiWind.
 
 # %% specify input ORD dirs
-parent_path = Path().absolute() / 'piwind-ord'
+parent_path = Path().absolute().parent / 'PiWindExample'
 # parent_path = Path().absolute() / 'piwind-ord'
 
-ord_output_dirs = [parent_path / "split/1/runs/losses-20251201164501/output/",
-                   parent_path / "split/2/runs/losses-20251201164618/output/"]
+ord_output_dirs = [parent_path / "split/1/runs/losses-20251210160743/output/",
+                   parent_path / "split/2/runs/losses-20251210160811/output/"]
 
 # %%
 # specify directory for outputs
 
-output_dir = Path("./combined_ord-" + datetime.now().strftime("%d%m%y%H%M%S"))
+output_dir = Path("../outputs/combined_ord-" + datetime.now().strftime("%d%m%y%H%M%S"))
 output_dir.mkdir(exist_ok=True)
 print(f'Output Path: {output_dir}')
 
@@ -75,8 +75,8 @@ print(f'Output Path: {output_dir}')
 # The `analysis_settings.json` files for each ORD analysis are parsed to read the Analysis and OutputSet tables.
 
 # %%
-from ord_combining.outputset import load_analysis_and_outputsets
-from ord_combining.common import dataclass_list_to_dataframe
+from combineord.outputset import load_analysis_and_outputsets
+from combineord.common import dataclass_list_to_dataframe
 
 analysis, outputsets = load_analysis_and_outputsets(ord_output_dirs)
 
@@ -102,7 +102,7 @@ outputsets_df.columns
 # The EventOccurenceSet table contains the meta information for each event set based on the `group_event_set_fields`.
 
 # %%
-from ord_combining.groupeventset import generate_group_set, generate_group_event_set
+from combineord.groupeventset import generate_group_set, generate_group_event_set
 group_event_set_fields = ['event_set_id', 'event_occurrence_id', 'model_supplier_id']
 
 group_set, group_output_set = generate_group_set(outputsets_df)
@@ -132,7 +132,7 @@ event_occurrence_set_analysis
 
 
 # %%
-from ord_combining.summaryinfo import load_summary_info, assign_summary_ids, generate_summary_id_map
+from combineord.summaryinfo import load_summary_info, assign_summary_ids, generate_summary_id_map
 os_summary_info = load_summary_info(analysis, outputsets_df)
 group_set_summary_info = assign_summary_ids(group_output_set, os_summary_info)
 
@@ -177,9 +177,9 @@ for gs, g_summary_info_df in group_set_summary_info.items():
 # The period information can be extracted from the header info of the `occurrence.bin` file.
 
 # %%
-from ord_combining.groupperiod import generate_group_periods
+from combineord.groupperiod import generate_group_periods
 
-total_group_periods = 10000  # config: set by user
+total_group_periods = 50000  # config: set by user
 
 # %%
 group_event_set_analysis = event_occurrence_set_analysis.rename(columns={'event_occurrence_set_id': 'group_event_set_id'})
@@ -221,7 +221,7 @@ group_format_priority = ['s']
 # The first stage in loss sampling is generating the GroupPeriodQuantile table.
 
 # %%
-from ord_combining.losssampling import construct_gpqt
+from combineord.losssampling import construct_gpqt
 
 gpqt = construct_gpqt(group_period, group_event_set_analysis, outputsets_df, analysis)
 
@@ -233,7 +233,7 @@ gpqt.to_csv(output_dir / "gpqt.csv", index=False)
 # Finally the loss sampling can be done to produce the group period loss table (GPLT).
 
 # %%
-from ord_combining.losssampling import do_loss_sampling_full_uncertainty, do_loss_sampling_mean_only
+from combineord.losssampling import do_loss_sampling_full_uncertainty, do_loss_sampling_mean_only
 
 # %%
 # secondary uncertainty sampling
@@ -271,7 +271,7 @@ gplt_full.sort_values(by=sort_cols).to_csv(output_dir / "gplt_full.csv", index=F
 gplt_mean.sort_values(by=sort_cols).to_csv(output_dir / "gplt_mean.csv", index=False)
 
 # %%
-from ord_combining.grouped_output import generate_al, generate_ep
+from combineord.grouped_output import generate_al, generate_ep
 
 
 def save_output(full_df, output_dir, output_name, factor_col='group_set_id', float_format='%.6f'):
@@ -317,3 +317,5 @@ ep_mean_df = generate_ep(gplt_mean, total_group_periods, oep=True, aep=True).ast
 
 save_output(ep_full_df, output_dir, 'ep_full.csv')
 save_output(ep_mean_df, output_dir, 'ep_mean.csv')
+
+# %%

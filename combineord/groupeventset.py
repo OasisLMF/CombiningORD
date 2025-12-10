@@ -1,5 +1,5 @@
 import pandas as pd
-from ord_combining.common import list_col_to_string
+from combineord.common import list_col_to_string
 
 
 def create_group_set_df(outputsets_df, group_id):
