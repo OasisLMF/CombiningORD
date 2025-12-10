@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 # run options
 
 runtype = 'qelt'
-expected_summary_level = 1
+expected_summary_level = 2
 generated_summary_level = expected_summary_level - 1
 
 # %%
@@ -39,11 +39,11 @@ generated_summary_level = expected_summary_level - 1
 assert runtype in ['qelt', 'selt'], 'Runtype not recognised'
 
 if runtype == 'qelt':
-    generated_path = Path('~/code/ODS_Tools/ord_combining/combined_ord-qelt/').expanduser()
+    generated_path = Path('../outputs/combined_ord-qelt')
 else:
-    generated_path = Path('~/code/ODS_Tools/ord_combining/combined_ord-selt/').expanduser()
+    generated_path = Path('../outputs/combined_ord-selt')
 
-expected_path = Path('/home/vinulw/code/ODS_Tools/ord_combining/piwind-ord/full/runs/losses-20251202160403/output').expanduser()
+expected_path = Path('../PiWindExample/full/runs/losses-20251210162054/output').expanduser()
 
 # %% [markdown]
 # ### Compare summary-info
@@ -98,8 +98,8 @@ generated_aal_full
 
 # %%
 # EP comparison options
-mean_only = True
-EPType = 1  # 1 = oep, 3 = aep
+mean_only = False
+EPType = 3  # 1 = oep, 3 = aep
 
 if mean_only:
     EP_Calc = 1
@@ -138,7 +138,7 @@ expected_ep = pd.read_csv(expected_path / f'gul_S{expected_summary_level}_ept.cs
 
 # %%
 # Output directory to save plots + comaprison df
-output_dir = Path('~/code/ODS_Tools/ord_combining/compare_ep/').expanduser()
+output_dir = Path('../outputs/tmp/')
 
 if not output_dir.exists():
     output_dir.mkdir(parents=True)
@@ -186,3 +186,5 @@ for summary_id in generated_ep['SummaryId'].unique():
                                                                        xlim=xlim, ax=ax, style=[':'])
     plt.savefig(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_{expected_summary_level}_id{summary_id}.png')
     plt.close()
+
+# %%

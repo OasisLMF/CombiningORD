@@ -25,7 +25,10 @@
                         "alt_meanonly": true,
                         "alt_period": true,
                         "ept_full_uncertainty_aep": true,
-                        "ept_full_uncertainty_oep": true
+                        "ept_full_uncertainty_oep": true,
+                        "plt_sample": true,
+                        "plt_quantile": true,
+                        "plt_moment": true
                     }
                 },
                 {
@@ -37,7 +40,10 @@
                         "alt_meanonly": true,
                         "alt_period": true,
                         "ept_full_uncertainty_aep": true,
-                        "ept_full_uncertainty_oep": true
+                        "ept_full_uncertainty_oep": true,
+                        "plt_sample": true,
+                        "plt_quantile": true,
+                        "plt_moment": true
                     },
                     "oed_fields": [
                         "LocNumber"
@@ -111,7 +117,7 @@
             "rl_summaries": [],
             "number_of_samples": 10
         },
-        "path": "/home/vinulw/code/ODS_Tools/piwind-ord/split/1/runs/losses-20251201164501/output"
+        "path": "/home/vinulw/code/CombiningORD/PiWindExample/split/1/runs/losses-20251210162021/output"
     },
     "2": {
         "id": 2,
@@ -139,7 +145,10 @@
                         "alt_meanonly": true,
                         "alt_period": true,
                         "ept_full_uncertainty_aep": true,
-                        "ept_full_uncertainty_oep": true
+                        "ept_full_uncertainty_oep": true,
+                        "plt_sample": true,
+                        "plt_quantile": true,
+                        "plt_moment": true
                     }
                 },
                 {
@@ -151,7 +160,10 @@
                         "alt_meanonly": true,
                         "alt_period": true,
                         "ept_full_uncertainty_aep": true,
-                        "ept_full_uncertainty_oep": true
+                        "ept_full_uncertainty_oep": true,
+                        "plt_sample": true,
+                        "plt_quantile": true,
+                        "plt_moment": true
                     },
                     "oed_fields": [
                         "LocNumber"
@@ -225,6 +237,6 @@
             "rl_summaries": [],
             "number_of_samples": 10
         },
-        "path": "/home/vinulw/code/ODS_Tools/piwind-ord/split/2/runs/losses-20251201164618/output"
+        "path": "/home/vinulw/code/CombiningORD/PiWindExample/split/2/runs/losses-20251210161844/output"
     }
 }
