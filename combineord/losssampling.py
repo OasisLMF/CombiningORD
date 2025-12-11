@@ -383,8 +383,6 @@ def do_loss_sampling_full_uncertainty(gpqt, output_set_df, group_output_set, ana
 
         elt_paths = load_loss_table_paths(analysis, summary_level_id=os['exposure_summary_level_id'],
                                           perspective=os['perspective_code'], output_type='elt')
-        print('ELT Paths: ', elt_paths)
-
         elt_dfs = {key: globals()[f'read_{key}'](value) for key, value in elt_paths.items()}  # todo handle this better (lazy load)
 
         curr_gpqt = gpqt.query('output_set_id == @output_set_id').reset_index(drop=True)
