@@ -212,7 +212,7 @@ group_period.to_csv(output_dir / 'group_period.csv', index=False)
 # }
 # ```
 #
-# So far only `q` and `s` loss sampling are implemented. We output both mean only and full secondary uncertainty sampling below.
+# We output both mean only and full secondary uncertainty sampling below.
 
 # %%
 group_format_priority = ['m']
