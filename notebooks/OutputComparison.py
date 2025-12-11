@@ -29,17 +29,19 @@ import matplotlib.pyplot as plt
 # %%
 # run options
 
-runtype = 'qelt'
+runtype = 'melt'
 expected_summary_level = 2
 generated_summary_level = expected_summary_level - 1
 
 # %%
 # Load files
 
-assert runtype in ['qelt', 'selt'], 'Runtype not recognised'
+assert runtype in ['qelt', 'selt', 'melt'], 'Runtype not recognised'
 
 if runtype == 'qelt':
     generated_path = Path('../outputs/combined_ord-qelt')
+elif runtype == 'melt': 
+    generated_path = Path('../outputs/combined_ord-melt')
 else:
     generated_path = Path('../outputs/combined_ord-selt')
 
@@ -99,7 +101,7 @@ generated_aal_full
 # %%
 # EP comparison options
 mean_only = False
-EPType = 3  # 1 = oep, 3 = aep
+EPType = 1  # 1 = oep, 3 = aep
 
 if mean_only:
     EP_Calc = 1
@@ -114,6 +116,14 @@ else:
     raise Exception('EPType not supported')
 
 total_group_periods = 10000
+
+# %%
+# Output directory to save plots + comaprison df
+save_ep = True
+output_dir = Path('../outputs/compare_ep/')
+
+if not output_dir.exists():
+    output_dir.mkdir(parents=True)
 
 # %%
 # load EP tables
@@ -135,13 +145,6 @@ expected_ep = pd.read_csv(expected_path / f'gul_S{expected_summary_level}_ept.cs
 # %% [markdown]
 # To compare EP tables we find the matching ReturnPeriods and compare + plot the EP tables.
 # Note this is done for each SummaryId separately. The plots and merged ep tables are output in the desired output path.
-
-# %%
-# Output directory to save plots + comaprison df
-output_dir = Path('../outputs/tmp/')
-
-if not output_dir.exists():
-    output_dir.mkdir(parents=True)
 
 # %%
 for summary_id in generated_ep['SummaryId'].unique():
@@ -170,8 +173,7 @@ for summary_id in generated_ep['SummaryId'].unique():
 
     merged_oep_mean_expected_ep['Percent_Diff'] = merged_oep_mean_expected_ep['Loss_Diff'] / merged_oep_mean_expected_ep['Loss_gen'] * 100.0
 
-    merged_oep_mean_expected_ep.to_csv(
-        output_dir / f'{runtype}_{mean_ext}_{ep_ext}_gen_expected_merged_S{expected_summary_level}_id{summary_id}.csv', index=False)
+
 
     max_ret_period = ep_mean_expected_ep['ReturnPeriod'].max()
     gen_oep_in_range = ep_mean_generated_ep.query(f'RP <= {max_ret_period}')
@@ -184,7 +186,9 @@ for summary_id in generated_ep['SummaryId'].unique():
     ep_mean_expected_ep.rename(columns={'Loss': 'Expected Loss'}).plot('ReturnPeriod', 'Expected Loss',
                                                                        ylabel='Loss', grid=True,
                                                                        xlim=xlim, ax=ax, style=[':'])
-    plt.savefig(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_{expected_summary_level}_id{summary_id}.png')
-    plt.close()
+    if save_ep: 
+        merged_oep_mean_expected_ep.to_csv(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_gen_expected_merged_S{expected_summary_level}_id{summary_id}.csv', index=False)
+        plt.savefig(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_{expected_summary_level}_id{summary_id}.png')
+        plt.close()
 
 # %%

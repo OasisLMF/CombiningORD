@@ -54,8 +54,8 @@ if module_path not in sys.path:
 parent_path = Path().absolute().parent / 'PiWindExample'
 # parent_path = Path().absolute() / 'piwind-ord'
 
-ord_output_dirs = [parent_path / "split/1/runs/losses-20251210160743/output/",
-                   parent_path / "split/2/runs/losses-20251210160811/output/"]
+ord_output_dirs = [parent_path / "split/1/runs/losses-20251210162021/output/",
+                   parent_path / "split/2/runs/losses-20251210161844/output/"]
 
 # %%
 # specify directory for outputs
@@ -215,7 +215,7 @@ group_period.to_csv(output_dir / 'group_period.csv', index=False)
 # So far only `q` and `s` loss sampling are implemented. We output both mean only and full secondary uncertainty sampling below.
 
 # %%
-group_format_priority = ['s']
+group_format_priority = ['m']
 
 # %% [markdown]
 # The first stage in loss sampling is generating the GroupPeriodQuantile table.

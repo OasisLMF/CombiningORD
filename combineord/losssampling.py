@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from combineord.ordhandling import merge_melt, merge_qelt, merge_selt, read_melt, read_qelt, read_selt
+from combineord.ordhandling import merge_melt, read_melt, read_qelt, read_selt
 
 rng = np.random.default_rng(12345)
 
@@ -189,6 +189,7 @@ def do_loss_sampling_mean_only(gpqt, output_set_df, group_output_set, analysis_d
 
 
 def beta_sampling_group_loss(df):
+    df = df.copy() # intermediate table for calc
     df['mu'] = df['MeanLoss'] / df['MaxLoss']  # TODO need to verify form of this - also should we use MaxImpactedExposure as outlined in joh's sheet?
     df['sigma'] = df['SDLoss'] / df['MaxLoss']
 
@@ -211,12 +212,16 @@ def beta_sampling_group_loss(df):
 
 def mean_loss_sampling(gpqt, melt, sampling_func=beta_sampling_group_loss):
     original_cols = list(gpqt.columns)
+
     # sampling only works on SampleType 2
-    merged = merge_melt(gpqt, melt.query('SampleType == 2'))
+    _melt = melt.query('SampleType==2')[['SummaryId', 'EventId', 'MeanLoss', 'SDLoss', 'MaxLoss']]
 
-    loss_sampled_df = sampling_func(merged.query('not_merged == False'))
+    merged = gpqt['EventId'].isin(_melt["EventId"])
 
-    remaining_gpqt = gpqt.loc[merged['not_merged']]
+    remaining_gpqt = gpqt[~merged].reset_index(drop=True)
+
+    loss_sampled_df = gpqt[merged].merge(_melt, on='EventId', how='left')
+    loss_sampled_df = sampling_func(loss_sampled_df)
 
     if loss_sampled_df.empty:
         return None, remaining_gpqt
@@ -231,7 +236,7 @@ def quantile_loss_sampling(gpqt, qelt):
     original_cols = list(gpqt.columns)
 
     merged = gpqt["EventId"].isin(qelt["EventId"].unique())
-    remaining_gpqt = gpqt[~merged]
+    remaining_gpqt = gpqt[~merged].reset_index(drop=True)
 
     summary_ids = qelt["SummaryId"].unique()
     sample_loss_frags = []
@@ -323,7 +328,7 @@ def sample_loss_sampling(gpqt, selt, number_of_samples=10):
     original_cols = list(gpqt.columns)
     merged = gpqt["EventId"].isin(selt["EventId"].unique())
 
-    remaining_gpqt = gpqt[~merged][original_cols]
+    remaining_gpqt = gpqt[~merged][original_cols].reset_index(drop=True)
 
     # selt = selt.sort_values(by=['EventId', 'SampleLoss'], ascending=True)
     summary_ids = selt["SummaryId"].unique()
@@ -378,10 +383,11 @@ def do_loss_sampling_full_uncertainty(gpqt, output_set_df, group_output_set, ana
 
         elt_paths = load_loss_table_paths(analysis, summary_level_id=os['exposure_summary_level_id'],
                                           perspective=os['perspective_code'], output_type='elt')
+        print('ELT Paths: ', elt_paths)
 
         elt_dfs = {key: globals()[f'read_{key}'](value) for key, value in elt_paths.items()}  # todo handle this better (lazy load)
 
-        curr_gpqt = gpqt.query('output_set_id == @output_set_id')
+        curr_gpqt = gpqt.query('output_set_id == @output_set_id').reset_index(drop=True)
 
         for p in priority:
             elt_df = elt_dfs.get(f'{p}elt', None)
