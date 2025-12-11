@@ -32,6 +32,6 @@ There are two notebooks in this directory.
 
 1) `CombineORD.ipynb` - Performs the full procedure for combining the results from the
 `split/` exposure set.
-    - Example outputs from running using `QELT` and `SELT` are stored in the `combined_ord-qelt` and `combining_ord-selt` directories respectively.
+    - Example outputs from running using `MELT`, `QELT` and `SELT` are stored in the `outputs/combined_ord-{m, q, s}elt` directories respectively.
 2. `OutputComparison.ipynb` - Compare the output of `CombineORD.ipynb` with the
     output from running PiWind on the `full/` exposure set.
