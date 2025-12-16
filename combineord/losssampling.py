@@ -314,7 +314,7 @@ def sample_loss_sampling__summary_id(gpqt, selt, number_of_samples):
     loss_df = loss_df.merge(missing_sampleids[['missing']], how='left', left_on='EventId', right_index=True)
     loss_df['sample_idx'] = (loss_df['Quantile'] * number_of_samples).astype(int) - loss_df['missing']
 
-    selt_loss['SampleLossRank'] = selt_by_eventid['SampleLoss'].rank(method='dense').astype(int) - 1
+    selt_loss['SampleLossRank'] = selt_by_eventid['SampleLoss'].rank(method='first').astype(int) - 1
 
     selt_loss = selt_loss[['EventId', 'SampleLossRank', 'SampleLoss']]
     loss_df = loss_df.merge(selt_loss, left_on=['EventId', 'sample_idx'],

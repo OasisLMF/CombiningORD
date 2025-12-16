@@ -215,7 +215,7 @@ group_period.to_csv(output_dir / 'group_period.csv', index=False)
 # We output both mean only and full secondary uncertainty sampling below.
 
 # %%
-group_format_priority = ['m']
+group_format_priority = ['s']
 
 # %% [markdown]
 # The first stage in loss sampling is generating the GroupPeriodQuantile table.

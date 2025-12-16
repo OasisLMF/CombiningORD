@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 # %%
 # run options
 
-runtype = 'melt'
+runtype = 'selt'
 expected_summary_level = 2
 generated_summary_level = expected_summary_level - 1
 
@@ -119,7 +119,7 @@ total_group_periods = 10000
 
 # %%
 # Output directory to save plots + comaprison df
-save_ep = True
+save_ep = False
 output_dir = Path('../outputs/compare_ep/')
 
 if not output_dir.exists():
@@ -188,7 +188,12 @@ for summary_id in generated_ep['SummaryId'].unique():
                                                                        xlim=xlim, ax=ax, style=[':'])
     if save_ep: 
         merged_oep_mean_expected_ep.to_csv(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_gen_expected_merged_S{expected_summary_level}_id{summary_id}.csv', index=False)
-        plt.savefig(output_dir / f'{runtype}_{mean_ext}_{ep_ext}_{expected_summary_level}_id{summary_id}.png')
+        fig_path = output_dir / f'{runtype}_{mean_ext}_{ep_ext}_{expected_summary_level}_id{summary_id}.png'
+        print(f'Saving figure in: {fig_path}')
+        plt.savefig(fig_path)
         plt.close()
+    else: 
+        plt.show()
+
 
 # %%
