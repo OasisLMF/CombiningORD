@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 from scipy.special import betaincinv
 from tqdm import tqdm
+from scipy.stats import norm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -34,9 +35,43 @@ gplt_dtype = {
     'LossType': 'Int8'
 }
 
+def calculate_quantiles(gpqt, mean_only=False, correlation=None):
+    '''
+    Calculat gpqt Quantiles, handling partial / full correlations.
+    '''
+    if mean_only:
+        gpqt['Quantile'] = None
+        return gpqt
+
+
+    if correlation is None or correlation == 0.0: # uncorrelated
+        gpqt['Quantile'] = rng.random(size=len(gpqt))
+        return gpqt
+
+    output_cols = list(gpqt.columns) + ['Quantile']
+
+    correlated = gpqt.drop(columns=['output_set_id']).drop_duplicates()
+    merge_cols = correlated.columns
+
+    if correlation == 1.: # fully correlated
+        correlated['Quantile'] = rng.random(size=len(correlated))
+        return gpqt.merge(correlated, on=merge_cols)
+
+    # partial correlations
+    correlated['correlated'] = rng.normal(size=len(correlated))
+    gpqt = gpqt.merge(correlated, on=merge_cols)
+
+    gpqt['uncorrelated'] = rng.normal(size=len(gpqt))
+    gpqt['partial'] = ( gpqt['correlated'] * np.sqrt(correlation)
+                       + gpqt['uncorrelated'] * np.sqrt((1-correlation))
+                      )
+
+    gpqt['Quantile']  = norm.cdf(gpqt['partial'])
+    return gpqt[output_cols]
+
 
 def construct_gpqt(group_period_df, group_event_set_analysis_df, output_set_df, analysis,
-                   mean_only=False):
+                   mean_only=False, correlation=None):
 
     gpqt_fragments = []
 
@@ -59,14 +94,11 @@ def construct_gpqt(group_period_df, group_event_set_analysis_df, output_set_df, 
 
             _gpqt_fragment['output_set_id'] = curr_os['id']
 
-            if mean_only:
-                _gpqt_fragment['Quantile'] = None
-            else:
-                _gpqt_fragment['Quantile'] = rng.random(size=len(_gpqt_fragment))
-
             gpqt_fragments.append(_gpqt_fragment)
 
     gpqt = pd.concat(gpqt_fragments).reset_index(drop=True)
+
+    gpqt = calculate_quantiles(gpqt, mean_only, correlation)
     return gpqt.astype(gpqt_dtype)
 
 
