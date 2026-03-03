@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Clone PiWind
-git clone https://github.com/OasisLMF/OasisPiWind.git
+git clone --depth 1 https://github.com/OasisLMF/OasisPiWind.git
