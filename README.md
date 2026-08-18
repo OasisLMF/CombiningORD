@@ -1,5 +1,8 @@
 # Combining ORD Demo
 
+[!WARNING]
+> This is a demo repository that is now depracated. The combine tool is now part of [ODS Tools](https://github.com/OasisLMF/ODS_Tools) and further details of this tool can be found [here](https://github.com/OasisLMF/ODS_Tools/tree/main/ods_tools/combine).
+
 This folder contains the scripts necessary to run a demo of the method described in
 *Combining_results_in_ORD_v1.1.pdf*.
 
